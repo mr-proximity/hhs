@@ -643,88 +643,100 @@
             });
         }
 
-        // *** MODIFIED setMode Function ***
+       // *** MODIFIED setMode Function with DEBUG LOGGING ***
        function setMode(mode) {
-            console.log(`Setting mode to: ${mode}`);
-            handleContainerMouseLeave(); // Clear any glowing effect
-            // Don't close sidebar here, let showSidebar handle opening/content update
-            // closeSidebar();
+            console.log(`--- Setting mode to: ${mode} ---`); // Log start of function
+            handleContainerMouseLeave();
 
             currentMode = mode;
             const info = diseaseInfo[mode];
             const baseImgElement = imageElements[BASE_LAYER_ID];
 
-            // --- Layer Visibility Control ---
+            if (!baseImgElement) {
+                console.error("!!! Critical Error: baseImgElement not found!");
+                return;
+            }
 
-            // 1. Hide ALL individual skeleton layers first
+            // --- Layer Visibility Control ---
+            console.log("Hiding all skeleton layers...");
             skeletonLayers.forEach(l => {
                 if (imageElements[l.id]) {
                     imageElements[l.id].classList.add('hidden');
+                    // console.log(` > Hidden skeleton layer: ${l.id}`); // Optional: Verbose logging
+                } else {
+                    console.warn(` > Skeleton layer element not found for ID: ${l.id}`);
                 }
             });
 
-            // 2. Hide ALL disease extra layers first
+            console.log("Hiding all disease extra layers...");
             Object.values(diseaseInfo).forEach(d => {
                 d.extraLayers.forEach(l => {
                     // Use the unique ID assigned during creation
                     if (imageElements[l.id]) {
                         imageElements[l.id].classList.add('hidden');
-                    }
+                        // console.log(` > Hidden extra layer: ${l.id}`); // Optional: Verbose logging
+                    } else {
+                         console.warn(` > Extra layer element not found for ID: ${l.id} in disease ${d.name}`);
+                     }
                 });
             });
 
             // --- Set Base Image and Show Relevant Layers ---
-
             if (mode === 'default') {
+                console.log("Mode is default. Setting base src to test.png");
                 baseImgElement.src = 'test.png';
-                baseImgElement.classList.remove('hidden'); // Ensure base is visible
-                // Show individual skeleton layers for default view
+                baseImgElement.classList.remove('hidden');
+                console.log("Showing skeleton layers for default view.");
                 skeletonLayers.forEach(l => {
                     if (imageElements[l.id]) {
                         imageElements[l.id].classList.remove('hidden');
                     }
                 });
-                closeSidebar(); // No sidebar for default mode
-            } else if (info) { // Handle specific disease modes and 'about'
-                // Set base image source
-                if (info.baseImage) {
-                    baseImgElement.src = info.baseImage;
-                } else {
-                    // Default to test.png if no specific baseImage defined (e.g., Osteomyelitis, About)
-                    baseImgElement.src = 'test.png';
-                }
-                 baseImgElement.classList.remove('hidden'); // Make sure base is visible
+                closeSidebar();
+            } else if (info) {
+                let targetBaseSrc = 'test.png'; // Default assumption if none specified
+                 if (info.baseImage) {
+                     targetBaseSrc = info.baseImage;
+                 }
+                 console.log(`Mode is ${mode}. Setting base src to: ${targetBaseSrc}`);
+                baseImgElement.src = targetBaseSrc; // Set the source of the base layer
+                baseImgElement.classList.remove('hidden'); // Ensure it's visible
 
-                // Show ONLY the extra layers for this specific mode
-                 info.extraLayers.forEach(l => {
-                      // Use the unique ID assigned during creation
-                     if (imageElements[l.id]) {
-                         imageElements[l.id].classList.remove('hidden');
+                console.log(`Showing extra layers for ${mode}:`);
+                info.extraLayers.forEach(l => {
+                     // Use the unique ID assigned during creation
+                    if (imageElements[l.id]) {
+                        imageElements[l.id].classList.remove('hidden');
+                        console.log(` > Shown extra layer: ${l.id}`);
+                    } else {
+                         console.warn(` > Cannot show extra layer - element not found for ID: ${l.id}`);
                      }
-                 });
-
-                 // Show the sidebar with the info
-                 showSidebar(info);
+                });
 
                 // Special case for 'about': show skeleton layers on top of default base
                  if (mode === 'about') {
+                     console.log("Mode is 'about', showing skeleton layers.");
                      skeletonLayers.forEach(l => {
                          if (imageElements[l.id]) {
                              imageElements[l.id].classList.remove('hidden');
                          }
                      });
+                 } else {
+                     // For actual diseases, skeleton layers should remain hidden.
+                     console.log(`Mode is ${mode} (disease), skeleton layers should remain hidden.`);
                  }
-                 // For other disease modes, skeletonLayers remain hidden (already done above)
 
+                showSidebar(info); // Show the info in the sidebar
             } else {
                 console.warn(`Unknown mode: ${mode}. Reverting to default.`);
                 setMode('default'); // Fallback to default
                 return; // Exit early
             }
 
-            // --- Resize container based on the new base image ---
+            console.log(`Mode ${mode} setup complete. Requesting container resize.`);
             // Debounce or delay resizing slightly might be smoother
              setTimeout(() => resizeContainerForCurrentImage(), 50); // Delay slightly
+             console.log("--- setMode finished ---");
         }
 
         function resizeContainerForCurrentImage() {
