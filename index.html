@@ -22,7 +22,7 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            overflow-x: hidden; /* Prevent horizontal scroll */
+            overflow-x: hidden;
         }
 
         header {
@@ -76,62 +76,57 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            position: relative; /* Needed for absolute positioning of container */
+            position: relative;
             width: 100%;
-            overflow: hidden; /* Prevent content overflow issues */
+            overflow: hidden;
         }
 
         .container {
-            position: relative; /* Children positioned relative to this */
+            position: relative;
             margin: 20px;
             cursor: default;
             transition: transform 0.5s ease-in-out;
-            max-width: calc(100vw - var(--sidebar-width) - 60px); /* Adjust max width considering sidebar */
-            max-height: calc(100vh - var(--header-height) - 40px); /* Adjust max height */
-            flex-shrink: 0; /* Prevent container from shrinking */
-            /* width and height will be set dynamically by JS */
+            max-width: calc(100vw - var(--sidebar-width) - 60px);
+            max-height: calc(100vh - var(--header-height) - 40px);
+            flex-shrink: 0;
         }
 
         .container img.anatomy-layer {
-             /* Let natural dimensions dictate size, scale down if needed */
-              max-width: 100%;
-              max-height: 100%;
-              width: auto; /* Maintain aspect ratio */
-              height: auto; /* Maintain aspect ratio */
-              display: block; /* Prevents extra space below images */
-        }
+             max-width: 100%;
+             max-height: 100%;
+             width: auto;
+             height: auto;
+         }
 
         .anatomy-layer {
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%; /* Make layers fill the container set by JS */
+            width: 100%;
             height: 100%;
-            pointer-events: none; /* Allow clicks/hovers to pass through */
+            pointer-events: none;
             user-select: none;
             -webkit-user-drag: none;
             transition: filter 0.15s ease-in-out, opacity 0.3s ease-in-out;
             opacity: 1;
-            object-fit: contain; /* Ensure images fit within bounds */
         }
 
         .anatomy-layer.hidden {
              opacity: 0;
-             pointer-events: none; /* Ensure hidden layers are not interactive */
-        }
+             pointer-events: none;
+         }
 
         .hit-canvas {
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%; /* Match container size */
+            width: 100%;
             height: 100%;
-            pointer-events: none; /* Should not block mouse events intended for container */
-            visibility: hidden; /* Not visible to user */
+            pointer-events: none;
+            visibility: hidden;
         }
 
         .glowing {
-            /* Apply glow effect using drop-shadow filter */
             filter: drop-shadow(0 0 15px var(--glow-color));
         }
 
@@ -180,7 +175,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-shrink: 0; /* Prevent header from shrinking */
+            flex-shrink: 0;
         }
 
         .sidebar-header h4 {
@@ -194,7 +189,7 @@
             border: none;
             color: #aaa;
             font-size: 1.8em;
-            line-height: 1; /* Adjust line height for better alignment */
+            line-height: 1;
             cursor: pointer;
             padding: 0 5px;
             transition: color 0.2s ease;
@@ -206,22 +201,19 @@
 
         .sidebar-content {
             padding: 20px;
-            overflow-y: auto; /* Enable scrolling for content */
-            flex-grow: 1; /* Allow content to fill remaining space */
+            overflow-y: auto;
+            flex-grow: 1;
         }
 
-        /* Style images within the sidebar */
         .sidebar-content img.popup-gif,
         .sidebar-content img.popup-image {
-            max-width: 100%; /* Ensure images don't overflow sidebar */
+            max-width: 100%;
             height: auto;
             margin-bottom: 15px;
             border-radius: 5px;
-            background-color: #222; /* Placeholder background */
-            display: block; /* Prevent extra space */
+            background-color: #222;
         }
 
-        /* Styling for text elements in sidebar */
         .sidebar-content h5 {
              color: #bbb;
              margin-top: 20px;
@@ -229,13 +221,14 @@
              border-bottom: 1px solid #333;
              padding-bottom: 4px;
          }
+
          .sidebar-content p {
              font-size: 0.95em;
              line-height: 1.6;
              margin-bottom: 15px;
              color: #ccc;
          }
-         .sidebar-content a {
+          .sidebar-content a {
              color: var(--glow-color);
              text-decoration: none;
          }
@@ -243,26 +236,25 @@
              text-decoration: underline;
          }
          .sidebar-content ul {
-             list-style: none; /* Remove default list styling */
+             list-style: none;
              padding-left: 0;
          }
          .sidebar-content li {
-             margin-bottom: 8px;
-             font-size: 0.9em;
-             color: #bbb;
-         }
-         .sidebar-content .credits {
-             margin-top: 30px;
-             padding-top: 15px;
-             border-top: 1px solid #333;
-             font-size: 0.8em;
-             color: #888;
-         }
-         .sidebar-content .credits h5 {
-             color: #aaa;
-             margin-bottom: 10px;
-         }
-
+              margin-bottom: 8px;
+              font-size: 0.9em;
+              color: #bbb;
+          }
+           .sidebar-content .credits {
+               margin-top: 30px;
+               padding-top: 15px;
+               border-top: 1px solid #333;
+               font-size: 0.8em;
+               color: #888;
+           }
+           .sidebar-content .credits h5 {
+               color: #aaa;
+               margin-bottom: 10px;
+           }
     </style>
 </head>
 <body>
@@ -298,15 +290,11 @@
     <div id="loading">
          Loading Assets...
          <progress id="loading-progress" value="0" max="100"></progress>
-    </div>
+     </div>
 
     <script>
-        // Constants
-        const DEFAULT_BASE_IMAGE_ID = 'base-default';
-        const DISEASE_BASE_IMAGE_ID = 'base-disease';
-        const DEFAULT_BASE_SRC = 'test.png'; // Define default source once
+        const BASE_LAYER_ID = 'base';
 
-        // Data Definitions
         const skeletonLayers = [
              { id: 'skull', src: 'skull.png', name: 'Skull', interactive: true, gifSrc: 'skull.gif', info: 'The skull protects the brain and provides structure to the face. Made up of 22 bones, it is divided into the cranium (braincase) and facial bones.' },
              { id: 'spine', src: 'spine.png', name: 'Spine', interactive: true, gifSrc: 'spine.gif', info: 'The spine, or vertebral column, consists of 33 vertebrae. It supports the body, allows movement, and protects the spinal cord.' },
@@ -320,74 +308,73 @@
              { id: 'feet', src: 'feet.png', name: 'Foot Bones', interactive: true, gifSrc: 'feet.gif', info: 'Each foot contains 26 bones: tarsals (ankle), metatarsals (midfoot), and phalanges (toes), providing support and enabling locomotion.' }
         ];
 
-        const diseaseInfo = {
+         const diseaseInfo = {
              arthritis: {
                  name: 'Arthritis',
-                 baseImage: 'arthritis-test.png', // Specific background for this disease
+                 baseImage: 'arthritis-test.png',
                  extraLayers: [{ id: 'arthritis-hand', src: 'arthritis-hand.png', zIndex: 1000 }],
                  popupImage: 'arthritis-popj.jpeg',
-                 info: 'Arthritis is the swelling and tenderness of one or more joints... [rest of info]',
+                 info: 'Arthritis is the swelling and tenderness of one or more joints. The main symptoms are joint pain and stiffness, which typically worsen with age. Common types include osteoarthritis and rheumatoid arthritis. <br><br> Treatments vary depending on the type but may include medications, physical therapy, or surgery. Lifestyle changes can also help manage symptoms.',
                  links: [{ text: 'More on Arthritis (Mayo Clinic)', url: 'https://www.mayoclinic.org/diseases-conditions/arthritis/symptoms-causes/syc-20350772' }]
              },
              osteoporosis: {
                  name: 'Osteoporosis',
-                 baseImage: 'osteoporosis-test.png', // Specific background
+                 baseImage: 'osteoporosis-test.png',
                  extraLayers: [{ id: 'osteoporosis-arm', src: 'osteoporosis-arm.png', zIndex: 1000 }],
                  popupImage: 'osteoporosis-pop.jpeg',
-                 info: 'Osteoporosis causes bones to become weak and brittle... [rest of info]',
+                 info: 'Osteoporosis causes bones to become weak and brittle — so brittle that a fall or even mild stresses such as bending over or coughing can cause a fracture. Osteoporosis-related fractures most commonly occur in the hip, wrist or spine.<br><br>Treatment includes medication, healthy diet, and weight-bearing exercise to help prevent bone loss or strengthen already weak bones.',
                  links: [{ text: 'Osteoporosis Overview (NIH)', url: 'https://www.niams.nih.gov/health-topics/osteoporosis' }]
              },
              osteomyelitis: {
                  name: 'Osteomyelitis',
-                 baseImage: DEFAULT_BASE_SRC, // Use the default 'test.png' for this one
+                 baseImage: 'test.png',
                  extraLayers: [{ id: 'osteomyelitis-arm', src: 'osteomyelitis-arm.png', zIndex: 1000 }],
                  popupImage: 'osteomyelitis-pop.png',
-                 info: 'Osteomyelitis is an infection in a bone... [rest of info]',
+                 info: 'Osteomyelitis is an infection in a bone. Infections can reach a bone by traveling through the bloodstream or spreading from nearby tissue. Infections can also begin in the bone itself if an injury exposes the bone to germs.<br><br>Treatment often involves surgery to remove parts of the bone that have died, followed by strong antibiotics, often intravenously.',
                  links: [{ text: 'Learn about Osteomyelitis (MSD Manual)', url: 'https://www.msdmanuals.com/home/bone,-joint,-and-muscle-disorders/bone-infections/osteomyelitis' }]
              },
              scoliosis: {
                  name: 'Scoliosis',
-                 baseImage: 'scoliosis2.png', // Specific background
+                 baseImage: 'scoliosis2.png',
                  extraLayers: [],
                  popupImage: 'scoliosis-popj.jpeg',
-                 info: 'Scoliosis is a sideways curvature of the spine... [rest of info]',
+                 info: 'Scoliosis is a sideways curvature of the spine that most often is diagnosed in adolescents. While scoliosis can occur in people with conditions such as cerebral palsy and muscular dystrophy, the cause of most childhood scoliosis is unknown.<br><br>Treatment depends on the severity of the curve. Options include observation, bracing, or surgery.',
                  links: [{ text: 'Scoliosis Information (SRS)', url: 'https://www.srs.org/patients-and-families/conditions-and-treatments/parents/scoliosis' }]
              },
              rickets: {
                  name: 'Rickets',
-                 baseImage: 'rickets-test.png', // Specific background
+                 baseImage: 'rickets-test.png',
                  extraLayers: [{ id: 'rickets-layer', src: 'rickets.png', zIndex: 1000 }],
                  popupImage: 'rickets-popj.jpeg',
-                 info: 'Rickets is the softening and weakening of bones in children... [rest of info]',
+                 info: 'Rickets is the softening and weakening of bones in children, usually because of an extreme and prolonged vitamin D deficiency. Adding vitamin D or calcium to the diet generally corrects the bone problems associated with rickets.<br><br>Rare inherited problems also can cause rickets. For these, specific medications or other management might be needed.',
                  links: [{ text: 'Rickets Explained (KidsHealth)', url: 'https://kidshealth.org/en/parents/rickets.html' }]
              },
              about: {
                  name: 'About This Project',
-                 baseImage: null, // No specific base, will default to test.png display
+                 baseImage: null,
                  extraLayers: [],
                  popupImage: null,
                  info: `<h5>Skeletal System as Scaffold</h5>
-                       <p>This interactive tool explores the human skeletal system...</p>
-                       <div class="credits">
-                           <h5>Project Credits</h5>
-                           <ul>
-                               <li>10484 - Ashish Kori</li>
-                               <li>10483 - Samruddhi Khapare</li>
-                               <li>10474 - Darshan Bhoir</li>
-                               <li>10476 - Jayesh Devlekar</li>
-                               <li>10477 - Paras Dhende</li>
-                               <li>10479 - Manomay Ghadi</li>
-                               <li>10480 - Isha Madhialagan</li>
-                               <li>10482 - Sayli Kargutkar</li>
-                               <li>10478 - Jess Demello</li>
-                               <li>10481 - Abhinav Jha</li>
-                               <li>10475 - Luke Cabral</li>
-                           </ul>
-                       </div>`
+                    <p>This interactive tool explores the human skeletal system, the vital framework that supports our bodies, protects our organs, and enables movement. Explore different bones and learn about common conditions affecting skeletal health.</p>
+                    <div class="credits">
+                        <h5>Project Credits</h5>
+                        <ul>
+                            <li>10484 - Ashish Kori</li>
+                            <li>10483 - Samruddhi Khapare</li>
+                            <li>10474 - Darshan Bhoir</li>
+                            <li>10476 - Jayesh Devlekar</li>
+                            <li>10477 - Paras Dhende</li>
+                            <li>10479 - Manomay Ghadi</li>
+                            <li>10480 - Isha Madhialagan</li>
+                            <li>10482 - Sayli Kargutkar</li>
+                            <li>10478 - Jess Demello</li>
+                            <li>10481 - Abhinav Jha</li>
+                            <li>10475 - Luke Cabral</li>
+                        </ul>
+                    </div>`
              }
-        };
+         };
 
-        // DOM Elements
         const container = document.getElementById('container');
         const loadingIndicator = document.getElementById('loading');
         const loadingProgress = document.getElementById('loading-progress');
@@ -398,35 +385,30 @@
         const header = document.querySelector('header');
         const headerTitle = document.getElementById('header-title');
 
-        // State Variables
-        const imageElements = {}; // Store image elements by ID
-        const canvasElements = {}; // Store hit canvas elements by ID
-        const canvasContexts = {}; // Store canvas contexts by ID
+        const imageElements = {};
+        const canvasElements = {};
+        const canvasContexts = {};
         let assetsToLoad = 0;
         let assetsLoaded = 0;
-        let activeLayerId = null; // ID of the currently hovered interactive layer
-        let currentMode = 'default'; // 'default', 'arthritis', 'about', etc.
-        let baseImageNaturalWidth = 0; // Store original dimensions of default base
+        let activeLayerId = null;
+        let currentMode = 'default';
+        let baseImageNaturalWidth = 0;
         let baseImageNaturalHeight = 0;
 
-        // --- Initialization ---
         function init() {
             console.log("Initializing...");
             setupHeaderListeners();
             sidebarCloseBtn.addEventListener('click', closeSidebar);
 
             headerTitle.addEventListener('click', () => {
-                // Reload or reset to default state
-                // window.location.reload(); // Full reload
-                setMode('default'); // Reset to default mode without reload
+                window.location.reload();
             });
 
-            // Collect all unique image URLs to preload
             const imageUrls = new Set();
-            imageUrls.add(DEFAULT_BASE_SRC); // Default base
+            imageUrls.add('test.png');
             skeletonLayers.forEach(l => imageUrls.add(l.src));
             Object.values(diseaseInfo).forEach(d => {
-                if (d.baseImage && d.baseImage !== DEFAULT_BASE_SRC) imageUrls.add(d.baseImage); // Unique disease bases
+                if (d.baseImage) imageUrls.add(d.baseImage);
                 if (d.popupImage) imageUrls.add(d.popupImage);
                 d.extraLayers.forEach(el => imageUrls.add(el.src));
             });
@@ -437,60 +419,47 @@
             loadingProgress.max = assetsToLoad;
 
             if (assetsToLoad === 0) {
-                console.warn("No assets found to load.");
-                setupScene(); // Try to setup anyway
+                setupScene();
                 return;
             }
 
-            // Create TWO base layers (one default, one for disease backgrounds)
-            createLayerElement({ id: DEFAULT_BASE_IMAGE_ID, src: '', name: 'Base Body Default', interactive: false, zIndex: 0 });
-            createLayerElement({ id: DISEASE_BASE_IMAGE_ID, src: '', name: 'Base Body Disease', interactive: false, zIndex: 0, initiallyHidden: true });
+            createLayerElement({ id: BASE_LAYER_ID, src: 'test.png', name: 'Base Body', interactive: false, zIndex: 0 });
 
-            // Create skeleton layers (start zIndex higher than base)
             skeletonLayers.forEach((layer, index) => {
                 createLayerElement({ ...layer, zIndex: index + 1 });
             });
 
-            // Create disease extra layers (high zIndex)
             Object.values(diseaseInfo).forEach(disease => {
                 disease.extraLayers.forEach(layerInfo => {
-                    createLayerElement({ ...layerInfo, interactive: false, initiallyHidden: true, zIndex: (layerInfo.zIndex !== undefined ? layerInfo.zIndex : 1000) });
+                    createLayerElement({ ...layerInfo, interactive: false, initiallyHidden: true });
                 });
             });
 
-            // Start preloading
-            imageUrls.forEach(url => {
-                if (url) preloadImage(url); // Check for null/empty URLs
-            });
+            imageUrls.forEach(url => preloadImage(url));
         }
 
-        // --- Element Creation ---
         function createLayerElement(layerData) {
             const img = new Image();
             img.className = 'anatomy-layer';
-            img.id = `${layerData.id}-layer`; // Unique ID including '-layer'
+            img.id = `${layerData.id}-layer`;
             img.alt = layerData.name || layerData.id;
             img.style.zIndex = layerData.zIndex === undefined ? 1 : layerData.zIndex;
             if (layerData.initiallyHidden) {
                 img.classList.add('hidden');
             }
-            // Set src later in checkAllAssetsLoaded to ensure preloading works
-            imageElements[layerData.id] = img; // Store reference using the simple ID (e.g., 'skull')
+            imageElements[layerData.id] = img;
             container.appendChild(img);
 
-            // Create hit canvas only for interactive skeleton layers
-            if (layerData.interactive && skeletonLayers.some(sl => sl.id === layerData.id)) {
+            if (layerData.interactive && layerData.id !== BASE_LAYER_ID) {
                 const canvas = document.createElement('canvas');
                 canvas.className = 'hit-canvas';
-                canvas.id = `${layerData.id}-canvas`; // Unique canvas ID
-                // zIndex higher than the image it corresponds to, for hit detection logic
+                canvas.id = `${layerData.id}-canvas`;
                 canvas.style.zIndex = (layerData.zIndex || 1) + 100;
                 canvasElements[layerData.id] = canvas;
                 container.appendChild(canvas);
             }
         }
 
-        // --- Asset Loading ---
         function preloadImage(url) {
             const img = new Image();
             img.onload = () => assetLoadHandler(url);
@@ -508,27 +477,22 @@
         function assetErrorHandler(url) {
             showError(`Failed to load asset: ${url}`, false);
             console.error(`Failed to load asset: ${url}`);
-            assetsLoaded++; // Still count as processed to finish loading sequence
+            assetsLoaded++;
             updateLoadingProgress();
-            checkAllAssetsLoaded(); // Check if this was the last one
+            checkAllAssetsLoaded();
         }
 
         function updateLoadingProgress() {
             loadingProgress.value = assetsLoaded;
             if (loadingIndicator.style.display !== 'none') {
-                // Update text content safely
                 loadingIndicator.firstChild.textContent = ` Loading Assets... (${assetsLoaded}/${assetsToLoad}) `;
             }
         }
 
         function checkAllAssetsLoaded() {
-            if (assetsLoaded >= assetsToLoad) { // Use >= in case of errors
+            if (assetsLoaded === assetsToLoad) {
                 console.log("All assets processed. Setting up scene.");
-
-                // Now set the src for the created image elements
-                if (imageElements[DEFAULT_BASE_IMAGE_ID]) imageElements[DEFAULT_BASE_IMAGE_ID].src = DEFAULT_BASE_SRC;
-                // disease base src is set dynamically
-
+                imageElements[BASE_LAYER_ID].src = 'test.png';
                 skeletonLayers.forEach(layer => {
                     if (imageElements[layer.id]) imageElements[layer.id].src = layer.src;
                 });
@@ -537,109 +501,72 @@
                         if (imageElements[layerInfo.id]) imageElements[layerInfo.id].src = layerInfo.src;
                     });
                 });
-
-                // Use setTimeout to allow the browser a moment to render images after src assignment
-                setTimeout(setupScene, 150);
+                setTimeout(setupScene, 100);
             }
         }
 
-        // --- Scene Setup (after loading) ---
         function setupScene() {
             console.log("Setting up scene...");
-            const baseDefaultImg = imageElements[DEFAULT_BASE_IMAGE_ID];
+            const baseImg = imageElements[BASE_LAYER_ID];
 
-            // Wait for the default base image to be ready to get dimensions
-            if (baseDefaultImg && baseDefaultImg.complete && baseDefaultImg.naturalWidth > 0) {
-                 baseImageNaturalWidth = baseDefaultImg.naturalWidth;
-                 baseImageNaturalHeight = baseDefaultImg.naturalHeight;
-                 console.log(`Base dimensions set: ${baseImageNaturalWidth}x${baseImageNaturalHeight}`);
+            if (!baseImg || !baseImg.complete || baseImg.naturalWidth === 0) {
+                showError("Base image missing or invalid after loading. Cannot initialize.", true);
+                return;
+            }
 
-                 // Set initial container size
-                 container.style.width = baseImageNaturalWidth + 'px';
-                 container.style.height = baseImageNaturalHeight + 'px';
+            baseImageNaturalWidth = baseImg.naturalWidth;
+            baseImageNaturalHeight = baseImg.naturalHeight;
 
-                 // Setup hit canvases
-                 let initializationSuccess = true;
-                 skeletonLayers.forEach(layer => {
-                     if (!layer.interactive) return;
+            container.style.width = baseImageNaturalWidth + 'px';
+            container.style.height = baseImageNaturalHeight + 'px';
 
-                     const img = imageElements[layer.id];
-                     const canvas = canvasElements[layer.id];
+            let initializationSuccess = true;
 
-                     if (!img || !canvas) {
-                         console.warn(`Image or Canvas missing for interactive layer ${layer.id}.`);
-                         return; // Skip canvas setup for this layer
-                     }
+            skeletonLayers.forEach(layer => {
+                if (!layer.interactive) return;
 
-                     // Wait for individual layer image to be ready
-                     if (img.complete && img.naturalWidth > 0) {
-                         canvas.width = img.naturalWidth;
-                         canvas.height = img.naturalHeight;
+                const img = imageElements[layer.id];
+                const canvas = canvasElements[layer.id];
 
-                         const ctx = canvas.getContext('2d', { willReadFrequently: true });
-                         if (!ctx) {
-                             console.error(`Could not get 2D context for ${layer.id}`);
-                             initializationSuccess = false;
-                             return;
-                         }
-                         try {
-                             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                             canvasContexts[layer.id] = ctx;
-                             console.log(`Canvas context created for ${layer.id}`);
-                         } catch (e) {
-                             console.error(`Error drawing image to canvas for ${layer.id}:`, e);
-                             initializationSuccess = false;
-                         }
-                     } else {
-                         // If image not ready yet, try again shortly or log error
-                         console.warn(`Image for layer ${layer.id} not ready during canvas setup. Interaction might be delayed.`);
-                         // Optionally, add a mechanism to retry canvas drawing onload for the specific image
-                          img.onload = () => { // Add onload listener for retry
-                              console.log(`Retrying canvas setup for ${layer.id} on image load.`);
-                              if (canvas && img.naturalWidth > 0) {
-                                 canvas.width = img.naturalWidth;
-                                 canvas.height = img.naturalHeight;
-                                 const ctxRetry = canvas.getContext('2d', { willReadFrequently: true });
-                                 if(ctxRetry) {
-                                     try {
-                                         ctxRetry.drawImage(img, 0, 0, canvas.width, canvas.height);
-                                         canvasContexts[layer.id] = ctxRetry; // Store context on successful retry
-                                         console.log(`Canvas context successfully created for ${layer.id} on retry.`);
-                                     } catch (e) {
-                                         console.error(`Error drawing image to canvas on retry for ${layer.id}:`, e);
-                                     }
-                                 }
-                              }
-                          };
-                     }
-                 });
+                if (!img || !canvas || !img.complete || img.naturalWidth === 0) {
+                    console.warn(`Skipping canvas setup for ${layer.id} due to image issues.`);
+                    return;
+                }
 
-                 if (initializationSuccess) {
-                     container.addEventListener('mousemove', handleContainerMouseMove);
-                     container.addEventListener('mouseleave', handleContainerMouseLeave);
-                     container.addEventListener('click', handleContainerClick);
-                     loadingIndicator.style.display = 'none';
-                     console.log("Initialization complete.");
-                 } else {
-                     showError("Initialization failed for some layers. Interaction may be incomplete.", true);
-                     loadingIndicator.style.display = 'none'; // Hide loading anyway
-                 }
+                canvas.width = img.naturalWidth;
+                canvas.height = img.naturalHeight;
 
+                const ctx = canvas.getContext('2d', { willReadFrequently: true });
+                if (!ctx) {
+                    console.error(`Could not get 2D context for ${layer.id}`);
+                    initializationSuccess = false;
+                    return;
+                }
+                try {
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    canvasContexts[layer.id] = ctx;
+                } catch (e) {
+                    console.error(`Error drawing image to canvas for ${layer.id}:`, e);
+                    initializationSuccess = false;
+                }
+            });
+
+            if(initializationSuccess) {
+                container.addEventListener('mousemove', handleContainerMouseMove);
+                container.addEventListener('mouseleave', handleContainerMouseLeave);
+                container.addEventListener('click', handleContainerClick);
+                loadingIndicator.style.display = 'none';
+                console.log("Initialization complete.");
             } else {
-                 // If default base image isn't ready, wait a bit and retry setupScene
-                 console.warn("Default base image not ready yet. Retrying setupScene...");
-                 setTimeout(setupScene, 200); // Retry after a short delay
+                showError("Initialization failed for some layers. Interaction may be incomplete.", true);
             }
         }
 
-
-        // --- UI Interaction ---
         function setupHeaderListeners() {
             header.addEventListener('click', (e) => {
                 if (e.target.tagName === 'A' && e.target.dataset.mode) {
                     e.preventDefault();
                     const mode = e.target.dataset.mode;
-                    // Toggle sidebar visibility for 'about' if already open and 'about' is clicked again
                     if (mode === 'about' && sidebar.classList.contains('visible') && currentMode === 'about') {
                         closeSidebar();
                     } else {
@@ -651,133 +578,55 @@
 
         function setMode(mode) {
             console.log(`Setting mode to: ${mode}`);
-            handleContainerMouseLeave(); // Reset any active hover effects
+            handleContainerMouseLeave();
 
             currentMode = mode;
 
-            // Get references to base layers
-            const defaultBaseImg = imageElements[DEFAULT_BASE_IMAGE_ID];
-            const diseaseBaseImg = imageElements[DISEASE_BASE_IMAGE_ID];
-
-            if (!defaultBaseImg || !diseaseBaseImg) {
-                console.error("Base image elements not found! Cannot change mode.");
-                return;
-            }
-
-            // --- Reset dynamic elements ---
-            // Hide disease base layer and clear its src
-            diseaseBaseImg.classList.add('hidden');
-            diseaseBaseImg.src = '';
-            // Hide all extra disease-specific layers
             Object.values(diseaseInfo).forEach(d => {
                 d.extraLayers.forEach(l => {
                     if (imageElements[l.id]) imageElements[l.id].classList.add('hidden');
                 });
             });
-            // Ensure skeleton layers are visible (might have been hidden - though not currently implemented)
-            skeletonLayers.forEach(l => {
-                 if(imageElements[l.id]) imageElements[l.id].classList.remove('hidden');
-            });
-            // Always start by showing the default base (it will be hidden later if needed)
-             defaultBaseImg.classList.remove('hidden');
 
-            // --- Configure based on mode ---
             const info = diseaseInfo[mode];
-            let resizeImageSource = DEFAULT_BASE_SRC; // Default resize source is test.png
+            const baseImgElement = imageElements[BASE_LAYER_ID];
 
             if (mode === 'default') {
-                // defaultBaseImg is already visible
+                baseImgElement.src = 'test.png';
+                skeletonLayers.forEach(l => {
+                    if(imageElements[l.id]) imageElements[l.id].classList.remove('hidden');
+                });
                 closeSidebar();
-                resizeImageSource = DEFAULT_BASE_SRC;
-            } else if (mode === 'about') {
-                // defaultBaseImg is already visible
-                showSidebar(info);
-                resizeImageSource = DEFAULT_BASE_SRC;
-            } else if (mode === 'osteomyelitis') {
-                // Use default base 'test.png'
-                defaultBaseImg.classList.remove('hidden');
-                diseaseBaseImg.classList.add('hidden'); // Ensure disease base is hidden
-
-                // Show extra layers for Osteomyelitis
-                if (info && info.extraLayers) {
-                    info.extraLayers.forEach(l => {
-                        if (imageElements[l.id]) imageElements[l.id].classList.remove('hidden');
-                    });
-                }
-                showSidebar(info);
-                resizeImageSource = DEFAULT_BASE_SRC; // Resize based on test.png
-
-            } else if (info) { // Handles other diseases (Arthritis, Osteoporosis, Scoliosis, Rickets)
-                // Hide default base ('test.png') for these diseases
-                defaultBaseImg.classList.add('hidden');
-
-                if (info.baseImage && info.baseImage !== DEFAULT_BASE_SRC) {
-                    // Use the specific disease background image
-                    diseaseBaseImg.src = info.baseImage;
-                    diseaseBaseImg.classList.remove('hidden'); // Show the disease background
-                    resizeImageSource = info.baseImage; // Resize based on this disease image
+            } else if (info) {
+                if (info.baseImage) {
+                    baseImgElement.src = info.baseImage;
                 } else {
-                    // If disease has no specific base OR its base is test.png (like Osteomyelitis, though handled above), show default
-                    console.warn(`Mode ${mode} requested default base or had no specific one. Showing default base.`);
-                    defaultBaseImg.classList.remove('hidden');
-                    diseaseBaseImg.classList.add('hidden');
-                    resizeImageSource = DEFAULT_BASE_SRC;
+                    baseImgElement.src = 'test.png';
                 }
 
-                // Show extra layers for the current disease
-                if (info.extraLayers) {
-                    info.extraLayers.forEach(l => {
-                        if (imageElements[l.id]) imageElements[l.id].classList.remove('hidden');
-                    });
-                }
+                skeletonLayers.forEach(l => {
+                    if(imageElements[l.id]) imageElements[l.id].classList.remove('hidden');
+                });
+
+                info.extraLayers.forEach(l => {
+                    if (imageElements[l.id]) imageElements[l.id].classList.remove('hidden');
+                });
+
                 showSidebar(info);
-
             } else {
-                // Unknown mode - fallback to default
-                console.warn(`Unknown mode: ${mode}. Setting to default.`);
-                defaultBaseImg.classList.remove('hidden');
-                diseaseBaseImg.classList.add('hidden');
-                closeSidebar();
-                resizeImageSource = DEFAULT_BASE_SRC;
-                currentMode = 'default'; // Explicitly set back
+                console.warn(`Unknown mode: ${mode}`);
+                setMode('default');
             }
 
-
-            // --- Resize container based on the determined source ---
-            // Use the natural dimensions stored earlier if resizing to default,
-            // otherwise load the new image to get its dimensions.
-            if (resizeImageSource === DEFAULT_BASE_SRC) {
-                 container.style.width = baseImageNaturalWidth + 'px';
-                 container.style.height = baseImageNaturalHeight + 'px';
-                 console.log(`Container resized to default dimensions for ${currentMode}.`);
-            } else if (resizeImageSource) {
-                 const tempImg = new Image();
-                 tempImg.onload = () => {
-                     if (tempImg.naturalWidth > 0 && tempImg.naturalHeight > 0) {
-                         container.style.width = tempImg.naturalWidth + 'px';
-                         container.style.height = tempImg.naturalHeight + 'px';
-                         console.log(`Container resized using ${resizeImageSource} dimensions (${tempImg.naturalWidth}x${tempImg.naturalHeight}) for ${currentMode}.`);
-                         // Potentially re-align or resize absolutely positioned children if necessary
-                     } else {
-                         console.warn(`Could not get dimensions for ${resizeImageSource}. Container not resized.`);
-                         // Fallback to default size?
-                         container.style.width = baseImageNaturalWidth + 'px';
-                         container.style.height = baseImageNaturalHeight + 'px';
-                     }
-                 };
-                 tempImg.onerror = () => {
-                     console.error(`Error loading image for resizing: ${resizeImageSource}. Falling back to default size.`);
-                     container.style.width = baseImageNaturalWidth + 'px';
-                     container.style.height = baseImageNaturalHeight + 'px';
-                 };
-                 tempImg.src = resizeImageSource;
-            } else {
-                 console.warn("No image source determined for resizing. Using default.");
-                 container.style.width = baseImageNaturalWidth + 'px';
-                 container.style.height = baseImageNaturalHeight + 'px';
-            }
+            const currentBaseSrc = baseImgElement.src;
+            const tempImg = new Image();
+            tempImg.onload = () => {
+                container.style.width = tempImg.naturalWidth + 'px';
+                container.style.height = tempImg.naturalHeight + 'px';
+                console.log(`Container resized for ${currentMode} base image.`);
+            };
+            tempImg.src = currentBaseSrc;
         }
-
 
         function showSidebar(data) {
             if (!data) return;
@@ -785,12 +634,9 @@
             sidebarTitle.textContent = data.name || 'Details';
             let contentHTML = '';
 
-            // Use popupImage first, then gifSrc if popupImage isn't available
-            const imageSrc = data.popupImage || data.gifSrc;
-            const imageClass = data.popupImage ? 'popup-image' : (data.gifSrc ? 'popup-gif' : '');
-
+            const imageSrc = data.popupImage || (data.gifSrc);
             if (imageSrc) {
-                contentHTML += `<img src="${imageSrc}" alt="${data.name}" class="${imageClass}">`;
+                contentHTML += `<img src="${imageSrc}" alt="${data.name}" class="${data.popupImage ? 'popup-image' : 'popup-gif'}">`;
             }
 
             contentHTML += `<div>${data.info || 'No information available.'}</div>`;
@@ -805,147 +651,106 @@
 
             sidebarContent.innerHTML = contentHTML;
             sidebar.classList.add('visible');
-             // Scroll sidebar content to top when opened
-             sidebarContent.scrollTop = 0;
         }
 
         function closeSidebar() {
             sidebar.classList.remove('visible');
-            // Optional: If closing sidebar should always return to default view
-            // if (currentMode !== 'default') {
-            //    setMode('default');
-            // }
         }
 
         function handleContainerMouseMove(event) {
-            // Only allow hover effects in default mode when sidebar is closed or showing bone info
-            if (currentMode !== 'default' || (sidebar.classList.contains('visible') && diseaseInfo[currentMode] )) {
-                 handleContainerMouseLeave(); // Ensure no glow if not in correct state
-                 return;
+            if (currentMode !== 'default') {
+                handleContainerMouseLeave();
+                return;
             }
 
             let foundLayerId = null;
-             // Iterate reverse order for correct top-most layer detection
             for (let i = skeletonLayers.length - 1; i >= 0; i--) {
                 const layer = skeletonLayers[i];
                 if (layer.interactive && canvasContexts[layer.id] && imageElements[layer.id] && !imageElements[layer.id].classList.contains('hidden')) {
-                    if (isPixelHit(event, canvasElements[layer.id], canvasContexts[layer.id])) {
+                    if (!isPixelTransparent(event, canvasElements[layer.id], canvasContexts[layer.id])) {
                         foundLayerId = layer.id;
-                        break; // Found the topmost layer under cursor
+                        break;
                     }
                 }
             }
 
-            // Update glow effect
-            if (foundLayerId !== activeLayerId) {
-                // Remove glow from previously active layer
+            if (foundLayerId && foundLayerId !== activeLayerId) {
                 if (activeLayerId && imageElements[activeLayerId]) {
                     imageElements[activeLayerId].classList.remove('glowing');
                 }
-                // Add glow to newly active layer
-                if (foundLayerId && imageElements[foundLayerId]) {
+                if (imageElements[foundLayerId]) {
                     imageElements[foundLayerId].classList.add('glowing');
                 }
-                activeLayerId = foundLayerId; // Update the active layer ID
+                activeLayerId = foundLayerId;
+            } else if (!foundLayerId && activeLayerId) {
+                handleContainerMouseLeave();
             }
         }
 
         function handleContainerMouseLeave() {
-            // Remove glow from the currently active layer when mouse leaves container
             if (activeLayerId && imageElements[activeLayerId]) {
                 imageElements[activeLayerId].classList.remove('glowing');
             }
-            activeLayerId = null; // Reset active layer ID
+            activeLayerId = null;
         }
 
         function handleContainerClick(event) {
-            // Only allow clicks to open bone info in default mode
             if (currentMode !== 'default') return;
 
             let clickedLayerId = null;
             for (let i = skeletonLayers.length - 1; i >= 0; i--) {
-                 const layer = skeletonLayers[i];
-                 if (layer.interactive && canvasContexts[layer.id] && imageElements[layer.id] && !imageElements[layer.id].classList.contains('hidden')) {
-                      if (isPixelHit(event, canvasElements[layer.id], canvasContexts[layer.id])) {
-                          clickedLayerId = layer.id;
-                          break;
-                      }
-                 }
+                const layer = skeletonLayers[i];
+                if (layer.interactive && canvasContexts[layer.id] && imageElements[layer.id] && !imageElements[layer.id].classList.contains('hidden')) {
+                    if (!isPixelTransparent(event, canvasElements[layer.id], canvasContexts[layer.id])) {
+                        clickedLayerId = layer.id;
+                        break;
+                    }
+                }
             }
 
             if (clickedLayerId) {
-                const clickedLayerData = skeletonLayers.find(l => l.id === clickedLayerId);
-                if (clickedLayerData) {
-                    console.log(`Clicked on: ${clickedLayerData.name}`);
-                    showSidebar(clickedLayerData); // Show info for the clicked bone
-                }
-            } else {
-                 // Optional: Close sidebar if clicking on empty space?
-                 // if (sidebar.classList.contains('visible')) {
-                 //    closeSidebar();
-                 // }
+                const clickedLayer = skeletonLayers.find(l => l.id === clickedLayerId);
+                console.log(`Clicked on: ${clickedLayer.name}`);
+                showSidebar(clickedLayer);
             }
         }
 
-        // --- Utility Functions ---
-        function isPixelHit(event, canvas, ctx) {
-            if (!canvas || !ctx) return false; // Cannot check if canvas/context is missing
+        function isPixelTransparent(event, canvas, ctx) {
+            if (!canvas || !ctx) return true;
 
-            const contRect = container.getBoundingClientRect(); // Use container bounds
-
-            // Calculate mouse position relative to the container
+            const contRect = container.getBoundingClientRect();
             const mouseX = event.clientX - contRect.left;
             const mouseY = event.clientY - contRect.top;
 
-            // Check if mouse is within the container bounds
             if (mouseX < 0 || mouseX >= container.clientWidth || mouseY < 0 || mouseY >= container.clientHeight) {
-                 // console.log("Click outside container bounds");
-                 return false;
+                return true;
             }
 
-             // Calculate scaling factor between displayed size and canvas natural size
-             // This assumes the canvas element itself is scaled to fit the container
-             const scaleX = canvas.width / container.clientWidth;
-             const scaleY = canvas.height / container.clientHeight;
+            const scaleX = canvas.width / canvas.clientWidth;
+            const scaleY = canvas.height / canvas.clientHeight;
+            const canvasX = Math.floor(mouseX * scaleX);
+            const canvasY = Math.floor(mouseY * scaleY);
 
-             // Calculate corresponding pixel coordinates on the canvas's internal bitmap
-             const canvasX = Math.floor(mouseX * scaleX);
-             const canvasY = Math.floor(mouseY * scaleY);
-
-            // Check if calculated canvas coordinates are valid
             if (canvasX < 0 || canvasX >= canvas.width || canvasY < 0 || canvasY >= canvas.height) {
-                 // console.log("Calculated canvas coordinates out of bounds");
-                 return false; // Coordinates outside the canvas's own dimensions
+                return true;
             }
 
             try {
-                // Get the pixel data (alpha channel) at the calculated canvas coordinates
                 const pixelData = ctx.getImageData(canvasX, canvasY, 1, 1).data;
-                // Alpha value is at index 3 (R=0, G=1, B=2, A=3)
-                const alpha = pixelData[3];
-                // Consider a pixel 'hit' if alpha is greater than a threshold (e.g., > 0 or > 10)
-                return alpha > 10; // Adjust threshold if needed (0-255 range)
+                return pixelData[3] < 20;
             } catch (e) {
-                // Error likely due to cross-origin issues if images aren't served properly,
-                // or if getImageData is called before drawing is complete.
-                console.error("Error reading pixel data:", e);
-                return false; // Treat as miss on error
+                return true;
             }
         }
 
-
         function showError(message, isFatal = false) {
-            console.error("Error:", message);
-            // Display error to the user, potentially overlaying the loading indicator
-            loadingIndicator.innerHTML = `Error: ${message}${isFatal ? '<br>Cannot continue.' : ''}`;
-            loadingIndicator.style.display = 'block'; // Make sure it's visible
             loadingIndicator.style.color = 'red';
-            // If fatal, maybe disable interactions or stop further execution
+            loadingIndicator.innerHTML = `Error: ${message}`;
+            loadingIndicator.style.display = 'block';
+            console.error(message);
         }
 
-        // --- Start the application ---
         document.addEventListener('DOMContentLoaded', init);
-
     </script>
 </body>
 </html>
