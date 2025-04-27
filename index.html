@@ -776,37 +776,41 @@
 
 
         // Shows/Updates the sidebar content
-        function showSidebar(data) {
-            if (!data) {
-                 closeSidebar();
-                 return;
-             }
+function showSidebar(data) {
+    if (!data) {
+        closeSidebar();
+        return;
+    }
 
-            sidebarTitle.textContent = data.name || 'Details';
-            let contentHTML = '';
+    sidebarTitle.textContent = data.name || 'Details';
+    let contentHTML = '';
 
-            // Use popupImage if available
-            const imageSrc = data.popupImage; // Removed || data.gifSrc logic, popupImage is specific
-            if (imageSrc) {
-                 // Use appropriate class based on if it might be a gif or static
-                 const imageClass = imageSrc.endsWith('.gif') ? 'popup-gif' : 'popup-image';
-                contentHTML += `<img src="${imageSrc}" alt="${data.name}" class="${imageClass}">`;
-            }
+    // Use popupImage if available (for disease modes)
+    if (data.popupImage) {
+        const imageClass = data.popupImage.endsWith('.gif') ? 'popup-gif' : 'popup-image';
+        contentHTML += `<img src="${data.popupImage}" alt="${data.name}" class="${imageClass}">`;
+    }
 
-            contentHTML += `<div>${data.info || 'No information available.'}</div>`;
+    // 🟰 NEW: If no popupImage but there is a gifSrc (for skeleton parts)
+    else if (data.gifSrc) {
+        contentHTML += `<img src="${data.gifSrc}" alt="${data.name}" class="popup-gif">`;
+    }
 
-            if (data.links && data.links.length > 0) {
-                contentHTML += `<h5>Learn More:</h5><ul>`;
-                data.links.forEach(link => {
-                    contentHTML += `<li><a href="${link.url}" target="_blank" rel="noopener noreferrer">${link.text}</a></li>`;
-                });
-                contentHTML += `</ul>`;
-            }
+    contentHTML += `<div>${data.info || 'No information available.'}</div>`;
 
-            sidebarContent.innerHTML = contentHTML;
-            sidebarContent.scrollTop = 0; // Scroll to top on content change
-            sidebar.classList.add('visible'); // Make sidebar visible
-        }
+    if (data.links && data.links.length > 0) {
+        contentHTML += `<h5>Learn More:</h5><ul>`;
+        data.links.forEach(link => {
+            contentHTML += `<li><a href="${link.url}" target="_blank" rel="noopener noreferrer">${link.text}</a></li>`;
+        });
+        contentHTML += `</ul>`;
+    }
+
+    sidebarContent.innerHTML = contentHTML;
+    sidebarContent.scrollTop = 0;
+    sidebar.classList.add('visible');
+}
+
 
         function closeSidebar() {
             sidebar.classList.remove('visible');
